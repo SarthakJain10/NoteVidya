@@ -1,11 +1,12 @@
 # 🎓 NoteVidya – Your AI-Powered YouTube Note Companion  
-🌐 [Live App](https://notevidya.streamlit.app)
 
----
-
-![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-brightgreen)
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+
+🌐 [Live App](https://notevidya.streamlit.app)  
+📂 [GitHub Repo](https://github.com/SarthakJain10/notevidya)
+
 
 ---
 
