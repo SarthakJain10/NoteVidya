@@ -83,7 +83,9 @@ streamlit run main.py
 
 ## 🙋‍♂️ About the Creator
 Sarthak Jain
+
 ECE Student, Specializing in AI & ML
+
 📍 Netaji Subhash University of Technology
 
 I'm passionate about building tools that empower students to learn smarter and faster.
@@ -97,7 +99,7 @@ Have suggestions or want to contribute?
 
 - Make your changes and submit a PR
 
-📬 For feedback, contact: your-sartak19167@gmail.com
+📬 For feedback, contact: sartak19167@gmail.com
 
 ## 📝 License
 
