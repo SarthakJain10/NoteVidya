@@ -15,14 +15,14 @@
 - 🔗 **Smart YouTube URL Parsing**  
   - Instantly validates any YouTube video link.
 
--  **Transcript Generation**  
+- 📝 **Transcript Generation**  
   - Uses available YouTube transcript  
   - OR downloads audio and uses speech-to-text (when transcript not available)
 
--  **AI-Generated Notes**  
+- 📓 **AI-Generated Notes**  
   - Summarizes video using **Gemini AI** for structured and clear notes.
 
--  **RAG-Based Chatbot**  
+- 💬 **RAG-Based Chatbot**  
   - Interact with a chatbot trained on video content using:
     - Hugging Face Embedding Model
     - Gemini LLM
