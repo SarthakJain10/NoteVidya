@@ -3,6 +3,12 @@
 
 ---
 
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-brightgreen)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+
+---
+
 ## ✨ Overview  
 **NoteVidya** is your one-stop AI tool that **automatically generates transcripts, detailed notes**, and offers an intelligent **chatbot** to discuss content from **any YouTube video** — powered by **RAG (Retrieval-Augmented Generation)** and **Gemini AI**.
 
