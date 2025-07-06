@@ -99,7 +99,7 @@ Have suggestions or want to contribute?
 
 - Make your changes and submit a PR
 
-📬 For feedback, contact: sartak19167@gmail.com
+📬 For feedback, contact: sarthak19167@gmail.com
 
 ## 📝 License
 
