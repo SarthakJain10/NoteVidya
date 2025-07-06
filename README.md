@@ -66,7 +66,7 @@ All secrets are securely stored using Streamlit’s secrets management system in
 To run the app locally:
 
 ```
-git clone https://github.com/your-username/notevidya.git
+git clone https://github.com/SarthakJain10/notevidya.git
 cd notevidya
 pip install -r requirements.txt
 streamlit run main.py
