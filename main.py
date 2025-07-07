@@ -259,49 +259,7 @@ if analyze_btn and video_url:
                     response = st.write_stream(stream)
 
                 st.session_state.messages.append({"role": "assistant", "content": response})
-        # with tabs[2]:
-        #     st.header("🤖 Chatbot")
-
-        #     transcript = st.session_state.get("tst")
-    
-
-        #     # Initialize session state only if not present
-        #     if "messages" not in st.session_state:
-        #         st.session_state.messages = []
-
-        #     chat_container = st.container()
-
-        #     # Display chat messages from history on app rerun
-        #     for message in st.session_state.messages:
-        #         with st.chat_message(message["role"]):
-        #             st.markdown(message["content"])
-
-        #     # Accept user input
-        #     if prompt := st.chat_input("How may i help you?"):
-        #         # Display user message in chat message container
-        #         with st.chat_message("user"):
-        #             st.markdown(prompt)
-        #         # Add user message to chat history
-        #         st.session_state.messages.append({"role": "user", "content": prompt})
-
-        #     qa_chain= create_retrieval_qa_pipeline(transcript)
-
-        #     # Streamed response emulator
-        #     def response_generator():
-        #         response = qa_chain.invoke({"query": prompt})
-        #         return response
-
-
-        #     # Display assistant response in chat message container
-        #     with st.chat_message("assistant"):
-        #         response_text = response_generator()
-        #         st.markdown(response_text)
-        #         # response = st.write_stream(response_generator())
-                
-        #     # Add assistant response to chat history
-        #     st.session_state.messages.append({"role": "assistant", "content": response_text})
-          
-
+        
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
