@@ -221,44 +221,85 @@ if analyze_btn and video_url:
         with tabs[2]:
             st.header("🤖 Chatbot")
 
-            transcript = st.session_state.get("tst")
-    
+            # Get Google API key from secrets or environment
+            api_key = st.secrets.get("GOOGLE_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+            if not api_key:
+                st.error("Google API key not found. Please add it to Streamlit secrets.")
+                st.stop()
+            else:
+                os.environ["GOOGLE_API_KEY"] = api_key  # Set it if not already
 
-            # Initialize session state only if not present
+            # Initialize Gemini model
+            client = init_chat_model("gemini-2.0-flash", model_provider="google-genai")
+
             if "messages" not in st.session_state:
                 st.session_state.messages = []
 
-            chat_container = st.container()
-
-            # Display chat messages from history on app rerun
+            # Display previous messages
             for message in st.session_state.messages:
                 with st.chat_message(message["role"]):
                     st.markdown(message["content"])
 
-            # Accept user input
-            if prompt := st.chat_input("How may i help you?"):
-                # Display user message in chat message container
+            # Handle user input
+            if prompt := st.chat_input("What is up?"):
+                st.session_state.messages.append({"role": "user", "content": prompt})
                 with st.chat_message("user"):
                     st.markdown(prompt)
-                # Add user message to chat history
-                st.session_state.messages.append({"role": "user", "content": prompt})
 
-            qa_chain= create_retrieval_qa_pipeline(transcript)
+                with st.chat_message("assistant"):
+                    # Generate assistant response
+                    stream = client.chat.completions.create(
+                        model="gemini-2.0-flash",  # Specify model name directly
+                        messages=[
+                            {"role": m["role"], "content": m["content"]}
+                            for m in st.session_state.messages
+                        ],
+                        stream=True,
+                    )
+                    response = st.write_stream(stream)
 
-            # Streamed response emulator
-            def response_generator():
-                response = qa_chain.invoke({"query": prompt})
-                return response
+                st.session_state.messages.append({"role": "assistant", "content": response})
+        # with tabs[2]:
+        #     st.header("🤖 Chatbot")
+
+        #     transcript = st.session_state.get("tst")
+    
+
+        #     # Initialize session state only if not present
+        #     if "messages" not in st.session_state:
+        #         st.session_state.messages = []
+
+        #     chat_container = st.container()
+
+        #     # Display chat messages from history on app rerun
+        #     for message in st.session_state.messages:
+        #         with st.chat_message(message["role"]):
+        #             st.markdown(message["content"])
+
+        #     # Accept user input
+        #     if prompt := st.chat_input("How may i help you?"):
+        #         # Display user message in chat message container
+        #         with st.chat_message("user"):
+        #             st.markdown(prompt)
+        #         # Add user message to chat history
+        #         st.session_state.messages.append({"role": "user", "content": prompt})
+
+        #     qa_chain= create_retrieval_qa_pipeline(transcript)
+
+        #     # Streamed response emulator
+        #     def response_generator():
+        #         response = qa_chain.invoke({"query": prompt})
+        #         return response
 
 
-            # Display assistant response in chat message container
-            with st.chat_message("assistant"):
-                response_text = response_generator()
-                st.markdown(response_text)
-                # response = st.write_stream(response_generator())
+        #     # Display assistant response in chat message container
+        #     with st.chat_message("assistant"):
+        #         response_text = response_generator()
+        #         st.markdown(response_text)
+        #         # response = st.write_stream(response_generator())
                 
-            # Add assistant response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": response_text})
+        #     # Add assistant response to chat history
+        #     st.session_state.messages.append({"role": "assistant", "content": response_text})
           
 
     except Exception as e:
