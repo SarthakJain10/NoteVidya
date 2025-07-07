@@ -247,7 +247,7 @@ if analyze_btn and video_url:
                         st.markdown(message["content"])
     
                 # Handle user input
-                if prompt := st.chat_input("What is up?"):
+                if prompt := st.chat_input("How may I help you? 😊"):
                     st.session_state.messages.append({"role": "user", "content": prompt})
                     with st.chat_message("user"):
                         st.markdown(prompt)
