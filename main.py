@@ -94,174 +94,177 @@ with st.container(border = True):
 # Tabs Activation Logic
 if analyze_btn and video_url:
     try:
-        # URL Validation & Processing
-        try:
-            video_id = transcript_generator.extract_video_url(video_url)
-        except Exception:
-            video_url = transcript_generator.verify_youtube_url(video_url)
-            video_id = transcript_generator.extract_video_url(video_url)
-
-        # Video Section
-        st.header("🎥 Watch Video")
-        st.video(video_url)
-        st.caption("Enjoy the YouTube video here.")
-
-        # Custom CSS Injection
-        st.markdown("""
-        <style>
-        /* Base tab style */
-        .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #3a3a3a;
-            font-family: 'Segoe UI', 'Arial', sans-serif;
-            padding: 10px 24px;
-            margin-bottom: 0px;
-        }
-
-        /* Active and inactive tabs */
-        .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-            background-color: #F63366 !important;
-            color: #fff !important;
-            border-radius: 8px 8px 0 0 !important;
-        }
-
-        .stTabs [data-baseweb="tab-list"] button[aria-selected="false"] {
-            background-color: #f0f2f6 !important;
-            color: #3a3a3a !important;
-            border-radius: 8px 8px 0 0 !important;
-        }
-
-        .stTabs [data-baseweb="tab-list"] {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            margin-bottom: 16px;
-        }
-
-        /* Default (light mode) content text color */
-        .custom-tab-content {
-            font-size: 20px !important;
-            line-height: 1.7;
-            font-family: 'Segoe UI', 'Arial', sans-serif;
-            color: #232323;
-        }
-
-        /* Dark mode overrides */
-        @media (prefers-color-scheme: dark) {
+        if not transcript_generator.is_valid_youtube_url(video_url):
+            st.error("❌ Invalid YouTube URL. Please enter a valid URL.")
+        else:
+            # URL Validation & Processing
+            try:
+                video_id = transcript_generator.extract_video_url(video_url)
+            except Exception:
+                video_url = transcript_generator.verify_youtube_url(video_url)
+                video_id = transcript_generator.extract_video_url(video_url)
+    
+            # Video Section
+            st.header("🎥 Watch Video")
+            st.video(video_url)
+            st.caption("Enjoy the YouTube video here.")
+    
+            # Custom CSS Injection
+            st.markdown("""
+            <style>
+            /* Base tab style */
             .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-                color: #ffffff;
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: #3a3a3a;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                padding: 10px 24px;
+                margin-bottom: 0px;
+            }
+    
+            /* Active and inactive tabs */
+            .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
+                background-color: #F63366 !important;
+                color: #fff !important;
+                border-radius: 8px 8px 0 0 !important;
             }
 
             .stTabs [data-baseweb="tab-list"] button[aria-selected="false"] {
-                background-color: #2c2c2c !important;
-                color: #ffffff !important;
+                background-color: #f0f2f6 !important;
+                color: #3a3a3a !important;
+                border-radius: 8px 8px 0 0 !important;
             }
-
+    
+            .stTabs [data-baseweb="tab-list"] {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                margin-bottom: 16px;
+            }
+    
+            /* Default (light mode) content text color */
             .custom-tab-content {
-                color: #e0e0e0;
+                font-size: 20px !important;
+                line-height: 1.7;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                color: #232323;
             }
-        }
-        </style>
-        """, unsafe_allow_html=True)
+    
+            /* Dark mode overrides */
+            @media (prefers-color-scheme: dark) {
+                .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+                    color: #ffffff;
+                }
+    
+                .stTabs [data-baseweb="tab-list"] button[aria-selected="false"] {
+                    background-color: #2c2c2c !important;
+                    color: #ffffff !important;
+                }
 
-        # Tabs Setup
-        tabs = st.tabs(['Transcript', 'Notes', 'Chatbot'])
-
-        # Transcript Tab
-        with tabs[0]:
-            st.header('📝 Transcript')
-            transcript_placeholder = st.empty()
-            transcript = None
-
-            # API + Local Fallback
-            try:
-                transcript = transcript_generator.get_youtube_transcript(video_id, Supadata_api)
-                st.toast("API transcript fetched successfully", icon="⚡")
-            except Exception as api_error:
-                st.warning(f"API fallback: {str(api_error)}")
+                .custom-tab-content {
+                    color: #e0e0e0;
+                }
+            }
+            </style>
+            """, unsafe_allow_html=True)
+    
+            # Tabs Setup
+            tabs = st.tabs(['Transcript', 'Notes', 'Chatbot'])
+    
+            # Transcript Tab
+            with tabs[0]:
+                st.header('📝 Transcript')
+                transcript_placeholder = st.empty()
+                transcript = None
+    
+                # API + Local Fallback
                 try:
-                    transcript = transcript_generator.download_and_transcribe(video_url)
-                    if transcript:
-                        st.toast("Local transcription completed", icon="🤖")
-                        with open(f"transcripts/{video_id}.txt", "w") as f:
-                            f.write(transcript)
-                except Exception as local_error:
-                    transcript_placeholder.error(f"Both methods failed: {str(local_error)}")
-
-            if 'tst' not in st.session_state:
-                st.session_state.tst = transcript
-
-            # Display Result
-            if transcript:
-                transcript_placeholder.markdown(
-                    f'<div class="custom-tab-content">{transcript or "No transcript available"}</div>',
-                    unsafe_allow_html=True)
-            else:
-                transcript_placeholder.warning("No transcript available")
-
-        # Notes Tab
-        with tabs[1]:
-            st.header("📚 Detailed Notes")
-            notes_placeholder = st.empty()
-
-            try:    
-                # Generation and display notes
-                with st.spinner("Generating notes..."):
-                    notes_result = chain.invoke({"transcript": transcript},
-                                                config={'run_name': 'SummaryGeneration'})
-                    # notes_placeholder.markdown(notes_result)
-                    notes_placeholder.markdown(
-                        f'<div class="custom-tab-content">{notes_result}</div>',
-                        unsafe_allow_html=True
-                    )
-            
-            except FileNotFoundError:
-                notes_placeholder.write("Transcript file not found.")
-            except Exception as e:
-                notes_placeholder.write(f"An error occurred while reading the transcript: {str(e)}")
-
-
-        # Chatbot Tab Implementation 
-        with tabs[2]:
-            st.header("🤖 Chatbot")
-
-            # Get Google API key from secrets or environment
-            api_key = st.secrets.get("GOOGLE_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-            if not api_key:
-                st.error("Google API key not found. Please add it to Streamlit secrets.")
-                st.stop()
-            else:
-                os.environ["GOOGLE_API_KEY"] = api_key  # Set it if not already
-
-            # Initialize Gemini model
-            client = init_chat_model("gemini-2.0-flash", model_provider="google-genai")
-
-            if "messages" not in st.session_state:
-                st.session_state.messages = []
-
-            # Display previous messages
-            for message in st.session_state.messages:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-
-            # Handle user input
-            if prompt := st.chat_input("What is up?"):
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-
-                with st.chat_message("assistant"):
-                    # Generate assistant response
-                    stream = client.chat.completions.create(
-                        model="gemini-2.0-flash",  # Specify model name directly
-                        messages=[
-                            {"role": m["role"], "content": m["content"]}
-                            for m in st.session_state.messages
-                        ],
-                        stream=True,
-                    )
-                    response = st.write_stream(stream)
-
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                    transcript = transcript_generator.get_youtube_transcript(video_id, Supadata_api)
+                    st.toast("API transcript fetched successfully", icon="⚡")
+                except Exception as api_error:
+                    st.warning(f"API fallback: {str(api_error)}")
+                    try:
+                        transcript = transcript_generator.download_and_transcribe(video_url)
+                        if transcript:
+                            st.toast("Local transcription completed", icon="🤖")
+                            with open(f"transcripts/{video_id}.txt", "w") as f:
+                                f.write(transcript)
+                    except Exception as local_error:
+                        transcript_placeholder.error(f"Both methods failed: {str(local_error)}")
+    
+                if 'tst' not in st.session_state:
+                    st.session_state.tst = transcript
+    
+                # Display Result
+                if transcript:
+                    transcript_placeholder.markdown(
+                        f'<div class="custom-tab-content">{transcript or "No transcript available"}</div>',
+                        unsafe_allow_html=True)
+                else:
+                    transcript_placeholder.warning("No transcript available")
+    
+            # Notes Tab
+            with tabs[1]:
+                st.header("📚 Detailed Notes")
+                notes_placeholder = st.empty()
+    
+                try:    
+                    # Generation and display notes
+                    with st.spinner("Generating notes..."):
+                        notes_result = chain.invoke({"transcript": transcript},
+                                                    config={'run_name': 'SummaryGeneration'})
+                        # notes_placeholder.markdown(notes_result)
+                        notes_placeholder.markdown(
+                            f'<div class="custom-tab-content">{notes_result}</div>',
+                            unsafe_allow_html=True
+                        )
+                
+                except FileNotFoundError:
+                    notes_placeholder.write("Transcript file not found.")
+                except Exception as e:
+                    notes_placeholder.write(f"An error occurred while reading the transcript: {str(e)}")
+    
+    
+            # Chatbot Tab Implementation 
+            with tabs[2]:
+                st.header("🤖 Chatbot")
+    
+                # Get Google API key from secrets or environment
+                api_key = st.secrets.get("GOOGLE_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+                if not api_key:
+                    st.error("Google API key not found. Please add it to Streamlit secrets.")
+                    st.stop()
+                else:
+                    os.environ["GOOGLE_API_KEY"] = api_key  # Set it if not already
+    
+                # Initialize Gemini model
+                client = init_chat_model("gemini-2.0-flash", model_provider="google-genai")
+    
+                if "messages" not in st.session_state:
+                    st.session_state.messages = []
+    
+                # Display previous messages
+                for message in st.session_state.messages:
+                    with st.chat_message(message["role"]):
+                        st.markdown(message["content"])
+    
+                # Handle user input
+                if prompt := st.chat_input("What is up?"):
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    with st.chat_message("user"):
+                        st.markdown(prompt)
+    
+                    with st.chat_message("assistant"):
+                        # Generate assistant response
+                        stream = client.chat.completions.create(
+                            model="gemini-2.0-flash",  # Specify model name directly
+                            messages=[
+                                {"role": m["role"], "content": m["content"]}
+                                for m in st.session_state.messages
+                            ],
+                            stream=True,
+                        )
+                        response = st.write_stream(stream)
+    
+                    st.session_state.messages.append({"role": "assistant", "content": response})
         
     except Exception as e:
         st.error(f"An error occurred: {e}")
