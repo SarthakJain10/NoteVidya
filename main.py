@@ -2,6 +2,9 @@ import streamlit as st
 import transcript_generator
 from notes_generator import chain
 from chatbot import create_retrieval_qa_pipeline
+import os
+import getpass
+from langchain.chat_models import init_chat_model
 
 Supadata_api = st.secrets["api"]["Supadata_api"] # transcript generation
 
