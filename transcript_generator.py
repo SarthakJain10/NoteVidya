@@ -10,6 +10,26 @@ import requests
 import tempfile
 
 
+def is_valid_youtube_url(url):
+    try:
+        parsed = urlparse(url)
+        domain = parsed.netloc.lower()
+
+        if "youtube.com" in domain:
+            query_params = parse_qs(parsed.query)
+            video_id = query_params.get("v")
+            if video_id and len(video_id[0]) == 11:
+                return True
+
+        elif "youtu.be" in domain:
+            video_id = parsed.path.strip("/")
+            if len(video_id) == 11:
+                return True
+
+        return False
+    except Exception:
+        return False
+    
 
 #Function to extract video id from url
 def extract_video_url(url: str):
